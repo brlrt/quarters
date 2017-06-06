@@ -1,5 +1,6 @@
-import React, { Component } from 'react';
-import './App.css';
+import React, { Component } from 'react'
+import './App.css'
+import Hammer from 'hammerjs'
 
 const colorSet1 = [
   'rgb(239, 191, 194)', // pink
@@ -184,6 +185,14 @@ class App extends Component {
   componentDidMount () {
     window.addEventListener("resize", this.updateDimensions.bind(this), true)
     window.addEventListener('keydown', this.handleKeydown.bind(this), true)
+
+    const mc = new Hammer(document, { preventDefault: true })
+
+    mc.get('swipe').set({ direction: Hammer.DIRECTION_ALL })
+    mc.get('pinch').set({ enable: true })
+
+    mc.on("swipedown", ev => this.addPiece())
+      .on("swipeup", ev => this.removePiece())
   }
 
   handleKeydown (ev) {
