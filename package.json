@@ -4,6 +4,7 @@
   "private": true,
   "homepage": "http://dmitric.github.io/quarters",
   "dependencies": {
+    "hammerjs": "^2.0.8",
     "react": "^15.5.4",
     "react-dom": "^15.5.4"
   },
