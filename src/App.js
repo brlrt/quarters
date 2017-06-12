@@ -216,7 +216,7 @@ class App extends Component {
     if (ev.which === 67) {
       ev.preventDefault()
       this.setState({displayColorPickers: !this.state.displayColorPickers})
-    } else if (ev.which === 82) {
+    } else if (ev.which === 82 && !(ev.metaKey || ev.ctrlKey)) {
       ev.preventDefault()
       this.forceUpdate()
     } else if (ev.which === 40) {
