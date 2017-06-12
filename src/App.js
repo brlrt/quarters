@@ -155,7 +155,7 @@ class App extends Component {
 
 
     return (
-      <div className="App" style={{ padding: this.state.padding }}>
+      <div className="App">
         { this.state.displayColorPickers ? <div className="color-pickers">
           <ColorPicker color={tinycolor(this.state.colors[0]).toRgb()} disableAlpha={true}
             handleChange={ (color) => {
@@ -186,11 +186,13 @@ class App extends Component {
               }
             } />
             </div> : null
-        } 
-        <svg viewBox={`0 0 ${this.state.dimension} ${this.state.dimension}`} width={this.state.width-2*this.state.padding} height={this.state.height-2*this.state.padding}>
-          <rect width={this.state.dimension} height={this.state.dimension} fill='#ffffff' />
-          <g>{circles}</g>
-        </svg>
+        }
+        <div style={{ padding: this.state.padding }}> 
+          <svg viewBox={`0 0 ${this.state.dimension} ${this.state.dimension}`} width={this.state.width-2*this.state.padding} height={this.state.height-2*this.state.padding}>
+            <rect width={this.state.dimension} height={this.state.dimension} fill='#ffffff' />
+            <g>{circles}</g>
+          </svg>
+        </div>
       </div>
     );
   }
