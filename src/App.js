@@ -1,23 +1,9 @@
 import React, { Component } from 'react'
 import './App.css'
 import Hammer from 'hammerjs'
-
-const colorSet1 = [
-  'rgb(239, 191, 194)', // pink
-  'rgb(51,52,54)', // black
-  'rgb(217,222,225)', // grey
-  'rgb(232,234,228)',  //tan
-  'rgb(242,242,242)' //white
-]
-
-const colorSet3 = [
-  'rgb(243, 145, 160)', // hotpink
- 'rgb(242, 116, 184)', // other pink
- 'rgb(73, 176, 194)',
- 'rgb(38, 95, 200)',
- 'rgb(221, 237, 173)',
- 'rgb(50, 40, 95)'
-]
+import { SketchPicker } from 'react-color'
+import reactCSS from 'reactcss'
+import tinycolor from 'tinycolor2'
 
 const colorSet = [
   '#edeae6',
@@ -35,7 +21,7 @@ class App extends Component {
     this.state = {
       dimension: 3,
       colors: colors.concat('transparent'),
-      fillColors: colors,
+      displayColorPickers: true,
       padding: 60
     }
   }
@@ -52,7 +38,7 @@ class App extends Component {
     }
 
     const randFill = () => {
-      return rand(this.state.fillColors)
+      return rand(this.state.colors.slice(0, 4))
     }
 
     const genColorArray = n => repeat(() => repeat(rand, n), n)
@@ -170,6 +156,37 @@ class App extends Component {
 
     return (
       <div className="App" style={{ padding: this.state.padding }}>
+        { this.state.displayColorPickers ? <div className="color-pickers">
+          <ColorPicker color={tinycolor(this.state.colors[0]).toRgb()} disableAlpha={true}
+            handleChange={ (color) => {
+                const result = this.state.colors.slice()
+                result[0] = color.hex
+                this.setState({colors: result}) 
+              }
+            } />
+          <ColorPicker color={tinycolor(this.state.colors[1]).toRgb()} disableAlpha={true}
+            handleChange={ (color) => {
+                const result = this.state.colors.slice()
+                result[1] = color.hex
+                this.setState({colors: result}) 
+              }
+            } />
+          <ColorPicker color={tinycolor(this.state.colors[2]).toRgb()} disableAlpha={true}
+            handleChange={ (color) => {
+                const result = this.state.colors.slice()
+                result[2] = color.hex
+                this.setState({colors: result}) 
+              }
+            } />
+          <ColorPicker color={tinycolor(this.state.colors[3]).toRgb()} disableAlpha={true}
+            handleChange={ (color) => {
+                const result = this.state.colors.slice()
+                result[3] = color.hex
+                this.setState({colors: result}) 
+              }
+            } />
+            </div> : null
+        } 
         <svg viewBox={`0 0 ${this.state.dimension} ${this.state.dimension}`} width={this.state.width-2*this.state.padding} height={this.state.height-2*this.state.padding}>
           <rect width={this.state.dimension} height={this.state.dimension} fill='#ffffff' />
           <g>{circles}</g>
@@ -198,6 +215,7 @@ class App extends Component {
   handleKeydown (ev) {
     if (ev.which === 67) {
       ev.preventDefault()
+      this.setState({displayColorPickers: !this.state.displayColorPickers})
     } else if (ev.which === 82) {
       ev.preventDefault()
       this.forceUpdate()
@@ -236,6 +254,71 @@ class App extends Component {
     const settings = { width: dim , height: dim }
 
     this.setState(settings)
+  }
+}
+
+class ColorPicker extends React.Component {
+
+  constructor (props) {
+    super(props)
+
+    this.state = {
+      color: props.color,
+      displayColorPicker: props.displayColorPicker,
+      disableAlpha: props.disableAlpha
+    }
+  }
+
+  handleClick = () => {
+    this.setState({ displayColorPicker: !this.state.displayColorPicker })
+  };
+
+  handleClose = () => {
+    this.setState({ displayColorPicker: false })
+    if (this.props.handleClose) {
+      this.props.handleClose()
+    }
+  };
+
+  handleChange = (color) => {
+    this.setState({ color: color.rgb })
+    this.props.handleChange(color)
+  };
+
+  render () {
+
+    const styles = reactCSS({
+      'default': {
+        color: {
+          background: this.state.disableAlpha ?
+                `rgb(${ this.state.color.r }, ${ this.state.color.g }, ${ this.state.color.b })` :
+                `rgba(${ this.state.color.r }, ${ this.state.color.g }, ${ this.state.color.b },  ${ this.state.color.a })`,
+        },
+        popover: {
+          position: 'absolute',
+          zIndex: '10',
+        },
+        cover: {
+          position: 'fixed',
+          top: '0px',
+          right: '0px',
+          bottom: '0px',
+          left: '0px',
+        },
+      },
+    })
+
+    return (
+      <div className='color-picker'>
+        <div className='swatch' onClick={ this.handleClick }>
+          <div className='color' style={ styles.color } />
+        </div>
+        { this.state.displayColorPicker ? <div style={ styles.popover }>
+          <div style={ styles.cover } onClick={ this.handleClose }/>
+          <SketchPicker color={ this.state.color } onChange={ this.handleChange } disableAlpha={this.state.disableAlpha} />
+        </div> : null }
+      </div>
+    )
   }
 }
 
